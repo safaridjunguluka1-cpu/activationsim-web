@@ -1,0 +1,304 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#123B66">
+  <title>ActivationSIM</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f0f3f8;
+      color: #243247;
+    }
+
+    header {
+      background: #123b66;
+      color: white;
+      padding: 22px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-size: 24px;
+    }
+
+    header p {
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    main {
+      width: min(100% - 30px, 1000px);
+      margin: 35px auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 18px #102b4610;
+      margin-bottom: 22px;
+    }
+
+    .login {
+      max-width: 430px;
+      margin: 45px auto;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #123b66;
+    }
+
+    .description {
+      color: #687589;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 15px 0 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d4dce6;
+      border-radius: 7px;
+      font-size: 16px;
+      outline-color: #246bb0;
+    }
+
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 12px 17px;
+      background: #1769aa;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0f5187;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 22px;
+    }
+
+    .secondary {
+      background: #e9f1fa;
+      color: #123b66;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 25px 0;
+    }
+
+    .stat {
+      background: white;
+      padding: 22px;
+      border-radius: 10px;
+      border-left: 4px solid #1769aa;
+    }
+
+    .stat p {
+      color: #687589;
+      margin-bottom: 12px;
+    }
+
+    .stat strong {
+      font-size: 25px;
+      color: #123b66;
+    }
+
+    .notice {
+      background: #fff7df;
+      border: 1px solid #f0d78c;
+      padding: 13px;
+      border-radius: 7px;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #778397;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      header {
+        padding: 18px;
+      }
+
+      header h1 {
+        font-size: 21px;
+      }
+
+      main {
+        width: calc(100% - 22px);
+        margin: 20px auto;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .login {
+        margin-top: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div>
+      <h1>ACTIVATIONSIM</h1>
+      <p>Système de gestion des agents et des activations</p>
+    </div>
+    <span>Plateforme de gestion</span>
+  </header>
+
+  <main>
+
+    <section id="loginPage" class="card login">
+      <h2>Bienvenue</h2>
+      <p class="description">
+        Connectez-vous pour accéder à votre espace de travail.
+      </p>
+
+      <form id="loginForm">
+        <label for="identifiant">Identifiant</label>
+        <input
+          id="identifiant"
+          name="identifiant"
+          type="text"
+          autocomplete="username"
+          placeholder="Votre identifiant"
+          required
+        >
+
+        <label for="motDePasse">Mot de passe</label>
+        <input
+          id="motDePasse"
+          name="motDePasse"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Votre mot de passe"
+          required
+        >
+
+        <button type="submit" class="primary">
+          SE CONNECTER
+        </button>
+      </form>
+
+      <div id="loginMessage" role="status" aria-live="polite"></div>
+
+      <p class="notice">
+        Cette interface est en cours de configuration.
+        La connexion sera activée après le raccordement sécurisé
+        à Supabase.
+      </p>
+    </section>
+
+    <section id="dashboardPage" class="hidden">
+      <div class="card">
+        <h2 id="welcomeTitle">Tableau de bord</h2>
+        <p class="description">
+          Bienvenue dans votre espace ActivationSIM.
+        </p>
+        <button id="logoutButton" class="secondary">
+          Se déconnecter
+        </button>
+      </div>
+
+      <div class="grid">
+        <div class="stat">
+          <p>Agents</p>
+          <strong id="agentsCount">—</strong>
+        </div>
+
+        <div class="stat">
+          <p>Activations</p>
+          <strong id="activationsCount">—</strong>
+        </div>
+
+        <div class="stat">
+          <p>Statut</p>
+          <strong style="font-size:18px">Connecté</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Mon espace</h2>
+        <p class="description">
+          Les données et les opérations seront affichées ici
+          après la connexion à la base de données.
+        </p>
+        <div id="roleContent"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    ActivationSIM © 2026 — Gestion des agents
+  </footer>
+
+  <script>
+    /*
+      Cette première version prépare uniquement l'interface.
+      Elle ne vérifie aucun mot de passe et ne crée aucune session.
+      Ne pas utiliser ces écrans comme une authentification réelle.
+      La prochaine étape consistera à connecter Supabase.
+    */
+
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      document.getElementById("loginMessage").textContent =
+        "La connexion Supabase n'est pas encore configurée. " +
+        "Aucun identifiant n'a été vérifié.";
+    });
+  </script>
+
+</body>
+</html>
+```
