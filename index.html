@@ -100,6 +100,11 @@
       background: #0f5187;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
     .primary {
       width: 100%;
       margin-top: 22px;
@@ -136,6 +141,11 @@
     .stat strong {
       font-size: 25px;
       color: #123b66;
+    }
+
+    #loginMessage {
+      margin-top: 15px;
+      line-height: 1.5;
     }
 
     .notice {
@@ -190,19 +200,30 @@
       <h1>ACTIVATIONSIM</h1>
       <p>Système de gestion des agents et des activations</p>
     </div>
+
     <span>Plateforme de gestion</span>
   </header>
 
   <main>
 
+    <!-- ========================= -->
+    <!-- PAGE DE CONNEXION -->
+    <!-- ========================= -->
+
     <section id="loginPage" class="card login">
+
       <h2>Bienvenue</h2>
+
       <p class="description">
         Connectez-vous pour accéder à votre espace de travail.
       </p>
 
       <form id="loginForm">
-        <label for="identifiant">Identifiant</label>
+
+        <label for="identifiant">
+          Identifiant
+        </label>
+
         <input
           id="identifiant"
           name="identifiant"
@@ -212,7 +233,10 @@
           required
         >
 
-        <label for="motDePasse">Mot de passe</label>
+        <label for="motDePasse">
+          Mot de passe
+        </label>
+
         <input
           id="motDePasse"
           name="motDePasse"
@@ -222,32 +246,57 @@
           required
         >
 
-        <button type="submit" class="primary">
+        <button
+          type="submit"
+          id="loginButton"
+          class="primary"
+        >
           SE CONNECTER
         </button>
+
       </form>
 
-      <div id="loginMessage" role="status" aria-live="polite"></div>
+      <div
+        id="loginMessage"
+        role="status"
+        aria-live="polite"
+      ></div>
 
-      <p class="notice">
-        Cette interface est en cours de configuration.
-        La connexion sera activée après le raccordement sécurisé
-        à Supabase.
-      </p>
     </section>
 
-    <section id="dashboardPage" class="hidden">
+
+    <!-- ========================= -->
+    <!-- TABLEAU DE BORD -->
+    <!-- ========================= -->
+
+    <section
+      id="dashboardPage"
+      class="hidden"
+    >
+
       <div class="card">
-        <h2 id="welcomeTitle">Tableau de bord</h2>
+
+        <h2 id="welcomeTitle">
+          Tableau de bord
+        </h2>
+
         <p class="description">
           Bienvenue dans votre espace ActivationSIM.
         </p>
-        <button id="logoutButton" class="secondary">
+
+        <button
+          id="logoutButton"
+          class="secondary"
+          type="button"
+        >
           Se déconnecter
         </button>
+
       </div>
 
+
       <div class="grid">
+
         <div class="stat">
           <p>Agents</p>
           <strong id="agentsCount">—</strong>
@@ -260,43 +309,490 @@
 
         <div class="stat">
           <p>Statut</p>
-          <strong style="font-size:18px">Connecté</strong>
+          <strong style="font-size:18px">
+            Connecté
+          </strong>
         </div>
+
       </div>
 
+
       <div class="card">
+
         <h2>Mon espace</h2>
-        <p class="description">
-          Les données et les opérations seront affichées ici
-          après la connexion à la base de données.
+
+        <p
+          class="description"
+          id="agentDetails"
+        >
+          Informations de votre compte.
         </p>
+
         <div id="roleContent"></div>
+
       </div>
+
     </section>
 
   </main>
+
 
   <footer>
     ActivationSIM © 2026 — Gestion des agents
   </footer>
 
+
   <script>
-    /*
-      Cette première version prépare uniquement l'interface.
-      Elle ne vérifie aucun mot de passe et ne crée aucune session.
-      Ne pas utiliser ces écrans comme une authentification réelle.
-      La prochaine étape consistera à connecter Supabase.
-    */
 
-    const loginForm = document.getElementById("loginForm");
+    // =====================================================
+    // CONFIGURATION SUPABASE
+    // =====================================================
 
-    loginForm.addEventListener("submit", function(event) {
-      event.preventDefault();
+    const SUPABASE_URL =
+      "https://ghplyhjyizmjvugkayyj.supabase.co";
 
-      document.getElementById("loginMessage").textContent =
-        "La connexion Supabase n'est pas encore configurée. " +
-        "Aucun identifiant n'a été vérifié.";
-    });
+    const SUPABASE_KEY =
+      "sb_publishable_myClPKwvbboUnlJoTQcBmw_CIKFYLqr";
+
+    const FUNCTION_CONNEXION =
+      SUPABASE_URL +
+      "/functions/v1/connexion-agent";
+
+
+    // =====================================================
+    // ÉLÉMENTS HTML
+    // =====================================================
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const loginPage =
+      document.getElementById("loginPage");
+
+    const dashboardPage =
+      document.getElementById("dashboardPage");
+
+    const loginMessage =
+      document.getElementById("loginMessage");
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+
+    // =====================================================
+    // AFFICHER UN MESSAGE
+    // =====================================================
+
+    function afficherMessage(
+      message,
+      succes = false
+    ) {
+
+      loginMessage.textContent = message;
+
+      loginMessage.style.color =
+        succes
+          ? "#237a36"
+          : "#c62828";
+    }
+
+
+    // =====================================================
+    // OUVRIR LE TABLEAU DE BORD
+    // =====================================================
+
+    function ouvrirDashboard(agent) {
+
+      loginPage.classList.add("hidden");
+
+      dashboardPage.classList.remove("hidden");
+
+
+      const nom =
+        agent.nom_complet ||
+        agent.identifiant ||
+        "Agent";
+
+
+      document.getElementById(
+        "welcomeTitle"
+      ).textContent =
+        "Bienvenue, " + nom;
+
+
+      document.getElementById(
+        "agentDetails"
+      ).textContent =
+        "Identifiant : " +
+        agent.identifiant;
+
+
+      document.getElementById(
+        "roleContent"
+      ).innerHTML =
+        "<p><strong>Nom :</strong> " +
+        (agent.nom_complet || "") +
+        "</p>" +
+
+        "<p style='margin-top:8px'>" +
+        "<strong>Identifiant :</strong> " +
+        agent.identifiant +
+        "</p>" +
+
+        "<p style='margin-top:8px'>" +
+        "<strong>Statut :</strong> " +
+        (agent.actif
+          ? "Actif"
+          : "Désactivé") +
+        "</p>";
+    }
+
+
+    // =====================================================
+    // CONNEXION
+    // =====================================================
+
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+
+        const identifiant =
+          document
+            .getElementById("identifiant")
+            .value
+            .trim();
+
+
+        const motDePasse =
+          document
+            .getElementById("motDePasse")
+            .value;
+
+
+        if (
+          !identifiant ||
+          !motDePasse
+        ) {
+
+          afficherMessage(
+            "Veuillez saisir votre identifiant et votre mot de passe."
+          );
+
+          return;
+        }
+
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+          "CONNEXION EN COURS...";
+
+
+        afficherMessage(
+          "Vérification des informations...",
+          true
+        );
+
+
+        try {
+
+          const reponse =
+            await fetch(
+              FUNCTION_CONNEXION,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+
+                  "apikey":
+                    SUPABASE_KEY
+                },
+
+                body: JSON.stringify({
+                  identifiant:
+                    identifiant,
+
+                  mot_de_passe:
+                    motDePasse
+                })
+              }
+            );
+
+
+          let resultat = {};
+
+          try {
+
+            resultat =
+              await reponse.json();
+
+          } catch {
+
+            resultat = {};
+
+          }
+
+
+          // ==============================================
+          // ERREUR SERVEUR
+          // ==============================================
+
+          if (!reponse.ok) {
+
+            throw new Error(
+              resultat.erreur ||
+              resultat.message ||
+              "Identifiant ou mot de passe incorrect."
+            );
+          }
+
+
+          // ==============================================
+          // VÉRIFICATION DE LA RÉPONSE
+          // ==============================================
+
+          if (
+            !resultat.session ||
+            !resultat.session.access_token ||
+            !resultat.agent
+          ) {
+
+            throw new Error(
+              "La réponse de Supabase est incomplète."
+            );
+          }
+
+
+          // ==============================================
+          // VÉRIFICATION DU COMPTE
+          // ==============================================
+
+          if (
+            resultat.agent.actif !== true
+          ) {
+
+            throw new Error(
+              "Ce compte est désactivé."
+            );
+          }
+
+
+          // ==============================================
+          // SAUVEGARDE DE LA SESSION
+          // ==============================================
+
+          sessionStorage.setItem(
+            "activationsim_session",
+            JSON.stringify(
+              resultat.session
+            )
+          );
+
+
+          sessionStorage.setItem(
+            "activationsim_agent",
+            JSON.stringify(
+              resultat.agent
+            )
+          );
+
+
+          // ==============================================
+          // OUVRIR L'INTERFACE
+          // ==============================================
+
+          loginForm.reset();
+
+          ouvrirDashboard(
+            resultat.agent
+          );
+
+
+        } catch (erreur) {
+
+          console.error(
+            "Erreur connexion :",
+            erreur
+          );
+
+
+          afficherMessage(
+            erreur.message ||
+            "Impossible de contacter le serveur."
+          );
+
+
+        } finally {
+
+          loginButton.disabled = false;
+
+          loginButton.textContent =
+            "SE CONNECTER";
+        }
+
+      }
+    );
+
+
+    // =====================================================
+    // DÉCONNEXION
+    // =====================================================
+
+    logoutButton.addEventListener(
+      "click",
+      async function() {
+
+        const sessionBrute =
+          sessionStorage.getItem(
+            "activationsim_session"
+          );
+
+
+        // Fermer la session Supabase
+        if (sessionBrute) {
+
+          try {
+
+            const session =
+              JSON.parse(
+                sessionBrute
+              );
+
+
+            if (
+              session.access_token
+            ) {
+
+              await fetch(
+                SUPABASE_URL +
+                "/auth/v1/logout",
+                {
+                  method: "POST",
+
+                  headers: {
+                    "Content-Type":
+                      "application/json",
+
+                    "apikey":
+                      SUPABASE_KEY,
+
+                    "Authorization":
+                      "Bearer " +
+                      session.access_token
+                  }
+                }
+              );
+            }
+
+          } catch (erreur) {
+
+            console.error(
+              "Erreur lors de la déconnexion :",
+              erreur
+            );
+          }
+        }
+
+
+        // Supprimer les données locales
+        sessionStorage.removeItem(
+          "activationsim_session"
+        );
+
+        sessionStorage.removeItem(
+          "activationsim_agent"
+        );
+
+
+        // Retour à la connexion
+        dashboardPage.classList.add(
+          "hidden"
+        );
+
+        loginPage.classList.remove(
+          "hidden"
+        );
+
+
+        afficherMessage(
+          "Vous êtes déconnecté.",
+          true
+        );
+      }
+    );
+
+
+    // =====================================================
+    // RESTAURATION DE SESSION
+    // =====================================================
+
+    try {
+
+      const sessionBrute =
+        sessionStorage.getItem(
+          "activationsim_session"
+        );
+
+
+      const agentBrut =
+        sessionStorage.getItem(
+          "activationsim_agent"
+        );
+
+
+      if (
+        sessionBrute &&
+        agentBrut
+      ) {
+
+        const session =
+          JSON.parse(
+            sessionBrute
+          );
+
+
+        const agent =
+          JSON.parse(
+            agentBrut
+          );
+
+
+        if (
+          session.access_token &&
+          agent.identifiant &&
+          agent.actif === true
+        ) {
+
+          ouvrirDashboard(
+            agent
+          );
+        }
+      }
+
+    } catch (erreur) {
+
+      console.error(
+        "Session invalide."
+      );
+
+
+      sessionStorage.removeItem(
+        "activationsim_session"
+      );
+
+      sessionStorage.removeItem(
+        "activationsim_agent"
+      );
+    }
+
   </script>
 
 </body>
