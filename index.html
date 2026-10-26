@@ -742,15 +742,15 @@ if (activationForm) {
       message.textContent = "Enregistrement en cours...";
       message.style.color = "#123b66";
 
-      // Date locale au format AAAA-MM-JJ
-      const maintenant = new Date();
-      const annee = maintenant.getFullYear();
-      const mois = String(maintenant.getMonth() + 1).padStart(2, "0");
-      const jour = String(maintenant.getDate()).padStart(2, "0");
-      const dateActivation = `${annee}-${mois}-${jour}`;
+     ```javascript
+// Date locale au format AAAA-MM-JJ
+const maintenant = new Date();
+const annee = maintenant.getFullYear();
+const mois = String(maintenant.getMonth() + 1).padStart(2, "0");
+const jour = String(maintenant.getDate()).padStart(2, "0");
+const dateActivation = `${annee}-${mois}-${jour}`;
 
-      // Les noms correspondent aux colonnes indiquées
-```javascript
+// Préparer les données pour Supabase
 const donnees = {
   numero_telephone: numeroTelephone,
   iccid: iccid,
@@ -760,6 +760,7 @@ const donnees = {
   date_activation: dateActivation
 };
 ```
+
 
 ```
 
