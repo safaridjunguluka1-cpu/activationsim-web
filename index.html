@@ -759,6 +759,17 @@ const donnees = {
   observations: observation,
   date_activation: dateActivation
 };
+const dateActivation = `${annee}-${mois}-${jour}`;
+
+// Préparer les données pour Supabase
+const donnees = {
+  numero_telephone: numeroTelephone,
+  iccid: iccid,
+  agent_id: agent.id,
+  statut: statut,
+  observations: observation,
+  date_activation: dateActivation
+};
 ```
 
 
