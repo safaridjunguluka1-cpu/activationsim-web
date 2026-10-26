@@ -329,7 +329,63 @@
         </p>
 
         <div id="roleContent"></div>
+<hr style="margin: 25px 0; border: 0; border-top: 1px solid #ddd;">
 
+<h2>Nouvelle activation SIM</h2>
+
+<p class="description">
+  Enregistrez les informations de la carte SIM.
+</p>
+
+<form id="activationForm">
+
+  <label for="numeroTelephone">Numéro de téléphone</label>
+  <input
+    type="tel"
+    id="numeroTelephone"
+    placeholder="Ex. : 0812345678"
+    required
+  >
+
+  <label for="iccid">ICCID de la carte SIM</label>
+  <input
+    type="text"
+    id="iccid"
+    placeholder="Saisissez l'ICCID"
+    required
+  >
+
+  <label for="statutActivation">Statut</label>
+  <select
+    id="statutActivation"
+    required
+    style="width:100%; padding:13px; border:1px solid #d4dce6; border-radius:7px; font-size:16px;"
+  >
+    <option value="">Choisir un statut</option>
+    <option value="Activée">Activée</option>
+    <option value="En attente">En attente</option>
+    <option value="Échec">Échec</option>
+  </select>
+
+  <label for="observation">Observation</label>
+  <textarea
+    id="observation"
+    rows="3"
+    placeholder="Observation facultative"
+    style="width:100%; padding:13px; border:1px solid #d4dce6; border-radius:7px; font-size:16px;"
+  ></textarea>
+
+  <button
+    type="submit"
+    id="enregistrerActivation"
+    class="primary"
+  >
+    ENREGISTRER L'ACTIVATION
+  </button>
+
+  <p id="activationMessage" role="status" aria-live="polite"></p>
+
+</form>
       </div>
 
     </section>
