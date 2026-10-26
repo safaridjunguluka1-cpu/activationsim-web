@@ -750,14 +750,17 @@ if (activationForm) {
       const dateActivation = `${annee}-${mois}-${jour}`;
 
       // Les noms correspondent aux colonnes indiquées
-      const donnees = {
-        "NUMERO DE TELEPHONE": numeroTelephone,
-        "ICCID": iccid,
-        "AGENT": agent.identifiant,
-        "STATUT": statut,
-        "OBSERVATION": observation,
-        "DATE D'ACTIVATION": dateActivation
-      };
+     ```javascript
+const donnees = {
+  numero_telephone: numeroTelephone,
+  iccid: iccid,
+  agent_id: agent.id,
+  statut: statut,
+  observations: observation,
+  date_activation: dateActivation
+};
+```
+
 
       const reponse = await fetch(
         SUPABASE_URL + "/rest/v1/activations",
